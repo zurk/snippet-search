@@ -124,9 +124,3 @@ if __name__ == '__main__':
         cut = get_cuts(ids, lines_num=lines_num)
         res = cuts2snippets(cut)
         sys.stdout.write(json.dumps(convert2json(res)))
-
-        ids = json.load(sys.stdin)
-        lines_num = max([max(lines) for lines in ids.values()])
-        cut = get_cuts(ids, lines_num=lines_num)
-        res = cuts2snippets(cut)
-        sys.stdout.write(json.dumps(convert2json(res)))
