@@ -21,7 +21,7 @@ def get_cuts(ids2node, lines_num):
 
 
 def cuts2snippets(cuts):
-    snippets = [[0, 0]]
+    snippets = [[1, 0]]
     down = False
     k = 0
     for i in range(len(cuts)-1):
