@@ -15,7 +15,6 @@ var (
 	bblfshAddr      string
 	defaultLanguage string
 	pyScript        string
-	out             string
 )
 
 type request struct {
@@ -29,7 +28,6 @@ func main() {
 	flag.StringVar(&bblfshAddr, "bblfsh", ":9432", "bblfsh server endpoint")
 	flag.StringVar(&defaultLanguage, "lang", "python", "file language")
 	flag.StringVar(&pyScript, "script", "line_ids2graph.py", "script to generate graph")
-	flag.StringVar(&out, "out", "", "output")
 	flag.Parse()
 
 	router := mux.NewRouter()

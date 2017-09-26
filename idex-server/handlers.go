@@ -87,7 +87,7 @@ func getGraph(identifiersAndLines map[string][]uint32) ([]byte, error) {
 		return nil, err
 	}
 
-	cmd := exec.Command("python", pyScript)
+	cmd := exec.Command("python3", pyScript)
 	cmd.Stdin = bytes.NewReader(data)
 	var out bytes.Buffer
 	var outErr bytes.Buffer
