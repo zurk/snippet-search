@@ -33,6 +33,7 @@ def cuts2snippets(cuts):
                 snippets[-1][1] = i
                 snippets.append([i+1, 0])
             down = False
+            eq = False
         if cuts[i + 1] < cuts[i]:
             down = True
         if cuts[i + 1] == cuts[i]:
