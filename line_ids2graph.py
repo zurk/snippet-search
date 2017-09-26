@@ -8,8 +8,8 @@ import json
 from subprocess import check_call
 import sys
 
-def get_cuts(ids2node, lines_count):
-    cuts = [0] * (lines_count - 1)
+def get_cuts(ids2node, lines_num):
+    cuts = [0] * (lines_num - 1)
 
     for id in ids2node:
         lines = sorted(ids2node[id])
@@ -21,14 +21,21 @@ def get_cuts(ids2node, lines_count):
 
 
 def cuts2snippets(cuts):
-    snippets = []
-    #down = False
-    #for i in range(len(cuts)-1):
-    #    if cuts[i+1] > cuts[i]:
-    #        if
-    #        down = False
-    #    if cuts[i+1] < cuts[i]:
-
+    snippets = [[0, 0]]
+    down = False
+    k = 0
+    for i in range(len(cuts)-1):
+        k += 1
+        if cuts[i+1] > cuts[i]:
+            if down and k > 5:
+                k = 0
+                snippets[-1][1] = i
+                snippets.append([i+1, 0])
+            down = False
+        if cuts[i + 1] < cuts[i]:
+            down = True
+    snippets[-1][1] = len(cuts) + 1
+    return snippets
 
 
 def notebook2py(notebook_path, py_path):
@@ -82,6 +89,7 @@ def save_nx_graph(graph, filepath):
 def load_igraph(filepath):
     return nx.read_gml("example.gml")
 
+
 def get_ids(filepath, lang="python"):
     outfile = 'data/ids_out.json'
     check_call(['go', 'run', 'identifiers-extractor.go', '-file', filepath, '-lang', lang,
@@ -91,8 +99,8 @@ def get_ids(filepath, lang="python"):
 
 if __name__ == '__main__':
     ids = json.load(sys.stdin)
-
-    edges = ids2graph(ids)
-    save_nx_graph(edges, "data/graph.gml")
-    snippets = get_snippets("data/graph.gml")
-    sys.stdout.write(json.dumps(snippets))
+    #ids = json.load(open("data/ids_out.json"))
+    lines_num = max([max(lines) for lines in ids.values()])
+    cut = get_cuts(ids, lines_num=lines_num)
+    res = cuts2snippets(cut)
+    sys.stdout.write(json.dumps(convert2json(res)))
