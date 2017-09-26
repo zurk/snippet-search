@@ -6,6 +6,29 @@ from collections import defaultdict
 from itertools import combinations
 import json
 from subprocess import check_call
+import sys
+
+def get_cuts(ids2node, lines_count):
+    cuts = [0] * (lines_count - 1)
+
+    for id in ids2node:
+        lines = sorted(ids2node[id])
+        n = len(lines)
+        for i in range(len(lines)-1):
+            for j in range(lines[i]-1, lines[i+1]-1):
+                cuts[j] += (n - 1 - i) * (i + 1)
+    return cuts
+
+
+def cuts2snippets(cuts):
+    snippets = []
+    #down = False
+    #for i in range(len(cuts)-1):
+    #    if cuts[i+1] > cuts[i]:
+    #        if
+    #        down = False
+    #    if cuts[i+1] < cuts[i]:
+
 
 
 def notebook2py(notebook_path, py_path):
@@ -35,7 +58,7 @@ def convert2json(comms):
             pos=(min(comm), max(comm)),
             content=None
         ))
-        
+
     return to_ui
 
 
@@ -67,14 +90,9 @@ def get_ids(filepath, lang="python"):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Snippet detection tool.')
-    parser.add_argument('input')
-    parser.add_argument('output')
+    ids = json.load(sys.stdin)
 
-    args = parser.parse_args()
-    ids = get_ids(args.input)
     edges = ids2graph(ids)
     save_nx_graph(edges, "data/graph.gml")
     snippets = get_snippets("data/graph.gml")
-    print(snippets)
-    json.dump(snippets, open(args.output, "w"))
+    sys.stdout.write(json.dumps(snippets))
