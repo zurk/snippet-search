@@ -38,11 +38,11 @@ def cuts2snippets(cuts):
     return snippets
 
 
-def notebook2py(notebook_path, py_path):
+def notebook2py(notebook_path):
     """
     Convert jupyter notebook to python script
     """
-    check_call(['jupyter', 'nbconvert', '--to', 'script', '--output ', py_path, notebook_path])
+    check_call(['jupyter', 'nbconvert', '--to', 'script', notebook_path])
 
 
 def ids2graph(ids2node):
@@ -98,9 +98,26 @@ def get_ids(filepath, lang="python"):
 
 
 if __name__ == '__main__':
-    ids = json.load(sys.stdin)
-    #ids = json.load(open("data/ids_out.json"))
-    lines_num = max([max(lines) for lines in ids.values()])
-    cut = get_cuts(ids, lines_num=lines_num)
-    res = cuts2snippets(cut)
-    sys.stdout.write(json.dumps(convert2json(res)))
+    parser = argparse.ArgumentParser(description='Snippet detection tool.')
+    parser.add_argument('--experiment-mode', action="store_true", default=False)
+    parser.add_argument('--input', default=None, required=False)
+    parser.add_argument('--output', default=None, required=False)
+    args = parser.parse_args()
+    if args.experiment_mode:
+        input = args.input
+        if args.input.endswith(".ipynb"):
+            notebook2py(input)
+            input = input.replace(".ipynb", ".py")
+        ids = get_ids(args.input)
+        lines_num = max([max(lines) for lines in ids.values()])
+        cut = get_cuts(ids, lines_num=lines_num)
+        res = cuts2snippets(cut)
+        json.dump(convert2json(res), open(args.output, 'w'))
+        print(res)
+    else:
+
+        ids = json.load(sys.stdin)
+        lines_num = max([max(lines) for lines in ids.values()])
+        cut = get_cuts(ids, lines_num=lines_num)
+        res = cuts2snippets(cut)
+        sys.stdout.write(json.dumps(convert2json(res)))
