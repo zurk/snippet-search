@@ -23,17 +23,20 @@ def get_cuts(ids2node, lines_num):
 def cuts2snippets(cuts):
     snippets = [[1, 0]]
     down = False
+    eq = False
     k = 0
     for i in range(len(cuts)-1):
         k += 1
         if cuts[i+1] > cuts[i]:
-            if down and k > 5:
+            if (down or eq) and k >= 5:
                 k = 0
                 snippets[-1][1] = i
                 snippets.append([i+1, 0])
             down = False
         if cuts[i + 1] < cuts[i]:
             down = True
+        if cuts[i + 1] == cuts[i]:
+            eq = True
     snippets[-1][1] = len(cuts) + 1
     return snippets
 
@@ -115,6 +118,11 @@ if __name__ == '__main__':
         json.dump(convert2json(res), open(args.output, 'w'))
         print(res)
     else:
+        ids = json.load(sys.stdin)
+        lines_num = max([max(lines) for lines in ids.values()])
+        cut = get_cuts(ids, lines_num=lines_num)
+        res = cuts2snippets(cut)
+        sys.stdout.write(json.dumps(convert2json(res)))
 
         ids = json.load(sys.stdin)
         lines_num = max([max(lines) for lines in ids.values()])
