@@ -1,0 +1,18 @@
+{
+    "errorHeight": 20,
+    "scripts": {
+        "server": {
+            "screensPerRow": 2,
+            "commands": [
+                {
+                    "label": "frontend",
+                    "command": "yarn start"
+                },
+                {
+                    "label": "server",
+                    "command": "cd .. && idex-server/bin/server"
+                }
+            ]
+        }
+    }
+}
