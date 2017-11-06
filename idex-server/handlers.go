@@ -34,6 +34,9 @@ func parseHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if source.Filename == "" {
+		writeError(w, fmt.Errorf("Filename not sent"), http.StatusBadRequest)
+		return
 	}
 
 	identifiersAndLines, err := extractIdentifiers(source.Filename, source.Content)
@@ -56,11 +59,7 @@ func parseHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, string(data))
 }
 
-func extractIdentifiers(lang string, content string) (map[string][]uint32, error) {
-	if lang == "" {
-		lang = defaultLanguage
-	}
-
+func extractIdentifiers(fileName string, content string) (map[string][]uint32, error) {
 	identifiersAndLines := map[string][]uint32{}
 
 	bblfshClient, err := bblfsh.NewClient(bblfshAddr)
@@ -68,7 +67,7 @@ func extractIdentifiers(lang string, content string) (map[string][]uint32, error
 		return nil, err
 	}
 
-	res, err := bblfshClient.NewParseRequest().Language(lang).Content(content).Do()
+	res, err := bblfshClient.NewParseRequest().Filename(fileName).Content(content).Do()
 	if err != nil {
 		return nil, err
 	}
