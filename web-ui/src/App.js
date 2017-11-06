@@ -21,16 +21,18 @@ class App extends Component {
   handleChange = (evt) => {
     var files = evt.target.files;
     for (let i = 0, filesCount = files.length; i < filesCount; i++) {
-      var reader = new FileReader();
+      const reader = new FileReader();
+      const fileName = files[i].name;
+
       reader.onload = evt => {
         const sourceCode = evt.target.result;
         this.setState({code: splitLines(sourceCode)})
-
         const payload = {
           method: 'POST',
           cache: 'default',
           body: JSON.stringify({
             content: sourceCode,
+            filename: fileName,
           }),
         };
 

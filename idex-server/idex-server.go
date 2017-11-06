@@ -18,8 +18,8 @@ var (
 )
 
 type request struct {
-	Filename string `json:"omitempty"`
-	Language string `json:"omitempty"`
+	Filename string
+	Language string
 	Content  string
 }
 
