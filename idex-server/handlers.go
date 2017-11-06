@@ -16,30 +16,37 @@ import (
 func parseHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, "", http.StatusInternalServerError)
+		writeError(w, err, http.StatusBadRequest)
 		return
 	}
 
 	source := &request{}
 	if err := json.Unmarshal(body, source); err != nil {
-		log.Println(err)
-		http.Error(w, "", http.StatusInternalServerError)
+		writeError(w, err, http.StatusBadRequest)
 		return
+	}
+
+	if source.Content == "" {
+		writeError(w, fmt.Errorf("Empty request"), http.StatusBadRequest)
+		return
+	}
 
 	}
 
 	identifiersAndLines, err := extractIdentifiers(source.Filename, source.Content)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, "", http.StatusInternalServerError)
+		writeError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	if len(identifiersAndLines) == 0 {
+		writeError(w, fmt.Errorf("No identifiers found"), http.StatusInternalServerError)
 		return
 	}
 
 	data, err := getGraph(identifiersAndLines)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, "", http.StatusInternalServerError)
+		writeError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -61,6 +68,10 @@ func extractIdentifiers(lang string, content string) (map[string][]uint32, error
 	res, err := bblfshClient.NewParseRequest().Language(lang).Content(content).Do()
 	if err != nil {
 		return nil, err
+	}
+
+	if res.UAST == nil {
+		return nil, fmt.Errorf("Empty UAST")
 	}
 
 	iterateIdentifiers(res.UAST, identifiersAndLines)
@@ -95,9 +106,13 @@ func getGraph(identifiersAndLines map[string][]uint32) ([]byte, error) {
 	cmd.Stderr = &outErr
 	err = cmd.Run()
 	if err != nil {
-		log.Println(string(outErr.Bytes()))
-		return nil, err
+		return nil, fmt.Errorf(string(outErr.Bytes()))
 	}
 
 	return out.Bytes(), nil
+}
+
+func writeError(w http.ResponseWriter, err error, errCode int) {
+	log.Println(err)
+	http.Error(w, err.Error(), errCode)
 }
