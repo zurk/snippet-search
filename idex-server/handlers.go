@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"os/exec"
 
-	"gopkg.in/bblfsh/client-go.v1"
+	bblfsh "gopkg.in/bblfsh/client-go.v2"
 	"gopkg.in/bblfsh/sdk.v1/uast"
 )
 
@@ -53,7 +53,7 @@ func extractIdentifiers(lang string, content string) (map[string][]uint32, error
 
 	identifiersAndLines := map[string][]uint32{}
 
-	bblfshClient, err := bblfsh.NewBblfshClient(bblfshAddr)
+	bblfshClient, err := bblfsh.NewClient(bblfshAddr)
 	if err != nil {
 		return nil, err
 	}
