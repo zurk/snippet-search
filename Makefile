@@ -1,7 +1,7 @@
 build:
 	CGO_ENABLED=0 go build -o idex-server/bin/server idex-server/*.go
 
-dependencies: front-dependencies
+dependencies: front-dependencies build
 
 front-dependencies:
 	cd web-ui && yarn install
