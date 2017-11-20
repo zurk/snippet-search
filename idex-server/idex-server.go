@@ -32,7 +32,7 @@ func main() {
 	flag.StringVar(&addr, "addr", ":8080", "endpoint to bind")
 	flag.StringVar(&bblfshAddr, "bblfsh", ":9432", "bblfsh server endpoint")
 	flag.StringVar(&defaultLanguage, "lang", "python", "file language")
-	flag.StringVar(&pyScript, "script", "line_ids2graph.py", "script to generate graph")
+	flag.StringVar(&pyScript, "script", "ids2graph/line_ids2graph.py", "script to generate graph")
 	flag.Parse()
 
 	if filePath == "" {
