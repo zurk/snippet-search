@@ -43,3 +43,12 @@ If you are serving the backend separately, or if you need to manually recompile 
 ```bash
 make build
 ```
+
+# Fetch identifiers in sour code
+
+The go server part can be used to retrieve the identifiers from a file as a command line tool. To do so, the server calls `bblfsh` and returns a json with all identifiers found and the lines where they were found.
+
+```bash
+make build; # only needed the first time you use it, or after you change the server go source code.
+idex-server/bin/server -file <PATH_TO_SOURCE_CODE>
+```
