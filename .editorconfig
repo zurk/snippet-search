@@ -1,0 +1,26 @@
+# EditorConfig helps developers define and maintain consistent
+# coding styles between different editors and IDEs
+# editorconfig.org
+
+root = true
+
+[*]
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+max_line_length = off
+
+[*.hbs]
+insert_final_newline = false
+
+[*.{md,ts,js,jsx,yml,yml.tpl,json,lock}]
+indent_size = 2
+
+[*.diff]
+trim_trailing_whitespace = false
+
+[{*.go,Makefile,makefile,Makefile.*}]
+indent_style = tab
