@@ -5,7 +5,7 @@ import igraph as ig
 from collections import defaultdict
 from itertools import combinations
 import json
-from subprocess import check_call
+from subprocess import Popen, PIPE
 import sys
 
 def get_cuts(ids2node, lines_num):
@@ -95,10 +95,9 @@ def load_igraph(filepath):
 
 
 def get_ids(filepath, lang="python"):
-    outfile = 'data/ids_out.json'
-    check_call(['go', 'run', 'identifiers-extractor.go', '-file', filepath, '-lang', lang,
-                '-out', outfile])
-    return json.load(open(outfile))
+    p = Popen(['idex-server/bin/server',  '-file', filepath], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    output, err = p.communicate()
+    return json.loads(output)
 
 
 if __name__ == '__main__':

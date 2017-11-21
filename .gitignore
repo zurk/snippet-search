@@ -1,6 +1,14 @@
 # misc
+.ipynb_checkpoints/
+.idea/
 .vscode/
 .DS_Store
 
 # Environments
 .env
+
+# python
+*.pyc
+
+#build
+*build/
