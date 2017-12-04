@@ -76,21 +76,25 @@ func extractIdentifiers(fileName string, content string) (map[string][]uint32, e
 		return nil, fmt.Errorf("Empty UAST")
 	}
 
-	iterateIdentifiers(res.UAST, identifiersAndLines)
+	iterateIdentifiers(res.UAST, identifiersAndLines, 0)
 	return identifiersAndLines, nil
 }
 
-func iterateIdentifiers(u *uast.Node, identifiersAndLines map[string][]uint32) {
+func iterateIdentifiers(u *uast.Node, identifiersAndLines map[string][]uint32, last_pos uint32) {
+	if u.StartPosition != nil {
+		last_pos = u.StartPosition.Line
+	}
+
 	for _, role := range u.Roles {
 		if role == uast.Identifier {
-			if u.Token != "" && u.StartPosition != nil {
-				identifiersAndLines[u.Token] = append(identifiersAndLines[u.Token], u.StartPosition.Line)
+			if u.Token != "" {
+				identifiersAndLines[u.Token] = append(identifiersAndLines[u.Token], last_pos)
 			}
 		}
 	}
 
 	for _, child := range u.Children {
-		iterateIdentifiers(child, identifiersAndLines)
+		iterateIdentifiers(child, identifiersAndLines, last_pos)
 	}
 }
 
